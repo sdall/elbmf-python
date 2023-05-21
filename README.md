@@ -31,16 +31,16 @@ from elbmf import elbmf
 X = torch.randint(0, 2, (100, 100))
 
 U, V = elbmf(
-    X                   = X,                  # Boolean input matrix 
-    n_components        = 20,                 # number of components 
-    l1reg               = 0.01,               # l1 coefficient 
-    l2reg               = 0.02,               # l2 coefficient 
-    regularization_rate = lambda t: 1.02**t,  # monotonically increasing regularization-rate (function)  
-    maxiter             = 3000,               # max number of iterations 
-    tolerance           = 1e-8,               # the absolute allowed difference between the current and previous losses determines the convergence of elbmf. 
-    beta                = 0.0001,             # inertial coefficient of iPALM 
-    callback            = None,               # e.g. lambda t, U, V, fn: ... 
-    with_rounding       = True)               # rounds U and V in case of early stopping. 
+    X                   = X,                  # a Boolean n*m matrix  
+    n_components        = 20,                 # number of components
+    l1reg               = 0.01,               # l1 coefficient
+    l2reg               = 0.02,               # l2 coefficient
+    regularization_rate = lambda t: 1.02**t,  # monotonically increasing regularization-rate function
+    maxiter             = 3000,               # maximum number of iterations
+    tolerance           = 1e-8,               # the threshold to the absolute difference between the current and previous losses determines the convergence
+    beta                = 0.0001,             # inertial coefficient of iPALM
+    callback            = None,               # e.g. lambda t, U, V, fn: print(t, fn)
+    with_rounding       = True)               # rounds U and V in case of early stopping
 ```
 
 If the resulting reconstruction is unexpected or not ideal, 

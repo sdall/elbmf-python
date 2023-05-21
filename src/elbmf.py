@@ -60,6 +60,7 @@ def elbmf_ipalm(
                  break
         return U, V
 
+
 @torch.no_grad()
 def elbmf(
         X,
@@ -73,35 +74,36 @@ def elbmf(
         callback            = None,
         with_rounding       = True
     ):
+    """
+    This function implements the algorithm described in the paper
+
+    Sebastian Dalleiger and Jilles Vreeken. “Efficiently Factorizing Boolean Matrices using Proximal Gradient Descent”. 
+    In: Thirty-Sixth Conference on Neural Information Processing Systems (NeurIPS). 2022
+
+    Arguments:
+    X                       a Boolean n*m matrix  
+    n_components            number of components
+    l1reg                   l1 coefficient
+    l2reg                   l2 coefficient
+    regularization_rate     monotonically increasing regularization-rate function
+    maxiter                 maximum number of iterations
+    tolerance               the threshold to the absolute difference between the current and previous losses determines the convergence
+    beta                    inertial coefficient of iPALM
+    callback                e.g. lambda t, U, V, fn: print(t, fn)
+    with_rounding           rounds U and V in case of early stopping
+
+    Returns:
+    U                       n*k factor matrix
+    V                       k*m factor matrix 
+    """
+    U, V = torch.rand(X.shape[0], n_components, dtype=X.dtype), torch.rand(n_components, X.shape[1], dtype=X.dtype)
+    U, V = elbmf_ipalm(X, U, V, l1reg, l2reg, regularization_rate, maxiter, tolerance, beta, callback)
+    if with_rounding:
+        with torch.no_grad():
+            U = proxelbmfnn(U, 0.5, l2reg * 1e12)
+            V = proxelbmfnn(V, 0.5, l2reg * 1e12)
+            return U.round(), V.round()
+    else:
+        return U, V
         
-        U, V = torch.rand(X.shape[0], n_components, dtype=X.dtype), torch.rand(n_components, X.shape[1], dtype=X.dtype)
-        U, V = elbmf_ipalm(X, U, V, l1reg, l2reg, regularization_rate, maxiter, tolerance, beta, callback)
-        if with_rounding:
-            with torch.no_grad():
-                U = proxelbmfnn(U, 0.5, l2reg * 1e12)
-                V = proxelbmfnn(V, 0.5, l2reg * 1e12)
-                return U.round(), V.round()
-        else:
-            return U, V
-        
 
-
-"""
-
-This function implements the algorithm described in the paper
-
-Sebastian Dalleiger and Jilles Vreeken. “Efficiently Factorizing Boolean Matrices using Proximal Gradient Descent”. 
-In: Thirty-Sixth Conference on Neural Information Processing Systems (NeurIPS). 2022
-
-in:
-        A                       Boolean input matrix
-        n_components,           number of components
-        l1reg                   l1 coefficient
-        l2reg                   l2 coefficient
-        regularization_rate     monotonically increasing regularization-rate (function) 
-        maxiter                 max number of iterations
-        tolerance               the absolute allowed difference between the current and previous losses determines the convergence of elbmf.
-        beta                    inertial coefficient of iPALM
-        callback                e.g. lambda t, U, V, fn: ...
-        with_rounding           rounds U and V in case of early stopping.
-"""
