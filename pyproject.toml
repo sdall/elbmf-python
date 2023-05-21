@@ -1,0 +1,9 @@
+[project]
+name = "elbmf"
+authors = [{name="Sebastian Dalleiger", email="sdalleig@mpi-inf.mpg.de"}]
+description = "This repository provides a Python library that implements the Elastic Boolean Matrix Factorization (Elbmf) algorithm using PyTorch."
+readme = "README.md"
+keywords = ["Boolean", "Binary", "Matrix Factorization", "Relaxation", "Proximal"]
+license = {text = "MIT"}
+version = "0.0.1"
+dependencies = ["torch"]
